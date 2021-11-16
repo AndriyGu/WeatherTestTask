@@ -15,6 +15,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 37 18 * * ?")
     public void reportCurrentTime() {
+        int i = 7;
         log.info("The time is now {}", dateFormat.format(new Date()));
         System.out.println("eeeeeeeee");
     }
