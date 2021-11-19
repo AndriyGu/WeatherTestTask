@@ -1,5 +1,7 @@
 package com.example.WeatherTestTask.model;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -16,12 +18,24 @@ public class RequestData {
 
     private int userId;
 
+    //поменять местами
+    //                     requestData
+    @OneToOne (mappedBy = "requestData")//, cascade = CascadeType.ALL)
+    private Weather current;
+
+
+    @ManyToOne (optional=false)
+    @JoinColumn (name="reqId")
+    private Location location;
+
     public RequestData() {
     }
 
-    public RequestData(int userId, LocalDateTime requestDate) {
-        this.userId = userId;
+    public RequestData(LocalDateTime requestDate, int userId, Weather current, Location location) {
         this.requestDate = requestDate;
+        this.userId = userId;
+        this.current = current;
+        this.location = location;
     }
 
     public int getId() {
@@ -42,5 +56,21 @@ public class RequestData {
 
     public void setRequestDate(LocalDateTime request_date) {
         this.requestDate = request_date;
+    }
+
+    public Weather getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Weather current) {
+        this.current = current;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

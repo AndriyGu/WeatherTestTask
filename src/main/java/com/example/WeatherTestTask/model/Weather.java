@@ -1,31 +1,33 @@
 package com.example.WeatherTestTask.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 
-
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
 @Table(name = "Weather")
 public class Weather {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String temp_c;
     private String wind_kph;
     private String humidity;
 
-    private int requestId;
+    @OneToOne
+    @JoinColumn(name = "id")
+    @MapsId
+    private RequestData requestData;
 
     public Weather() {
     }
 
-    public Weather(String temp_c, String wind_kph, String humidity, int requestId) {
+    public Weather(String temp_c, String wind_kph, String humidity, RequestData requestData) {
         this.temp_c = temp_c;
         this.wind_kph = wind_kph;
         this.humidity = humidity;
-        this.requestId = requestId;
+        this.requestData = requestData;
     }
 
     public int getId() {
@@ -56,11 +58,11 @@ public class Weather {
         this.humidity = humidity;
     }
 
-    public int getRequestId() {
-        return requestId;
+    public RequestData getRequestData() {
+        return requestData;
     }
 
-    public void setRequestId(int requestId) {
-        this.requestId = requestId;
+    public void setRequestData(RequestData requestData) {
+        this.requestData = requestData;
     }
 }

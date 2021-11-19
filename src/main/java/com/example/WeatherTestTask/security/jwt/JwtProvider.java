@@ -44,6 +44,7 @@ public class JwtProvider {
         User user = userRepository.findByLogin(customUserDetails.getUsername());
         String id = Integer.toString(user.getId());
         Claims claims = Jwts.claims().setSubject(customUserDetails.getUsername());
+
         claims.put("id", id);
 
         return Jwts.builder()
@@ -67,7 +68,9 @@ public class JwtProvider {
 
     public String getLoginFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        claims.getId();
         return claims.getSubject();
+
     }
 
     public int getIdFromToken(String token) {

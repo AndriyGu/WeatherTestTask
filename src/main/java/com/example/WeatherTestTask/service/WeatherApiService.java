@@ -1,9 +1,6 @@
 package com.example.WeatherTestTask.service;
 
-import com.example.WeatherTestTask.model.Location;
-import com.example.WeatherTestTask.model.RequestData;
-import com.example.WeatherTestTask.model.ResponseWeather;
-import com.example.WeatherTestTask.model.Weather;
+import com.example.WeatherTestTask.model.*;
 import com.example.WeatherTestTask.repository.LocationRepository;
 import com.example.WeatherTestTask.repository.RequestDataRepository;
 import com.example.WeatherTestTask.repository.UserRepository;
@@ -47,13 +44,14 @@ public class WeatherApiService {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("x-rapidapi-host", "weatherapi-com.p.rapidapi.com")
-                .header("x-rapidapi-key", "07071c677amsh6a746cfb396fc3dp14b316jsn7e00e7f557f4")
+                .header("x-rapidapi-key", ApiKeyHolder.apiKey)
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         ResponseWeather responseWeather = new Gson().fromJson(response.body(), ResponseWeather.class);
 
         if (responseWeather.getCurrent() != null && responseWeather.getLocation() != null) {
+            int i =9;
             saveDataToBase(responseWeather, req);
             return new ResponseEntity<ResponseWeather>(responseWeather, HttpStatus.OK);
         } else {
@@ -66,23 +64,29 @@ public class WeatherApiService {
         String token = jwtProvider.getTokenFromRequest(req);
         int userId = jwtProvider.getIdFromToken(token);
 
+        //Accounts a = new Accounts();
         RequestData requestData = new RequestData();
+        //a.setUser(user);
         requestData.setUserId(userId);
         LocalDateTime localDateTime = LocalDateTime.now();
         requestData.setRequestDate(localDateTime);
 
-        requestDataRepository.save(requestData);
+        // return a;
+
+        Weather weather = responseWeather.getCurrent();
+        weather.setRequestData(requestData);
+        weatherRepository.save(weather);
+
+       //requestDataRepository.save(requestData);
 
         //Bed way
 
-        int idRequest = requestDataRepository.findReqestByIdAndRequestData(userId, localDateTime).getId();
+    //  int idRequest = requestDataRepository.findReqestByIdAndRequestData(userId, localDateTime).getId();
 
-        Location location = responseWeather.getLocation();
-        location.setRequestId(idRequest);
-        locationRepository.save(location);
+        //requestData.setLocation(responseWeather.getLocation());
+       // Location location = responseWeather.getLocation();
+       // locationRepository.save(location);
 
-        Weather weather = responseWeather.getCurrent();
-        weather.setRequestId(idRequest);
-        weatherRepository.save(weather);
+
     }
 }
